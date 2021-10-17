@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <iframe width="0" height="0" src="http://youtuberepeater.com/watch?v=9gkRJONZPSA&name=Post+Malone+Circles+Clean+Lyrics#gsc.tab=0" frameboarder="0" allowfullscreen></iframe>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/eat.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eat Clicker</title>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
+    <script>
+        var clicker = {
+            eat:0,
+            upgrades: {
+                eat_machine:{
+                    amount:0,
+                    cost:10,
+                    eps:1,
+                    name:"Eat Machines"
+                },
+                eat_factory:{
+                    amount:0,
+                    cost:2000,
+                    eps:100,
+                    name:"Eat Factories"
+                },
+                eat_king:{
+                    amount:0,
+                    cost:200000,
+                    eps:10000,
+                    name:"Eat KING"
+                }
+            }
+        };
+        var delay = 0;
+        function thing_clicked(thing){
+            if(clicker.upgrades[thing].cost <= clicker.eat){
+                clicker.eat-= clicker.upgrades[thing].cost;
+            clicker.upgrades[thing].amount++;
+            clicker.upgrades[thing].cost += Math.round(clicker.upgrades[thing].cost*0.15);
+            update_upgrades();
+            }
+        }
+        function update_upgrades(){
+            document.querySelector("#upgrades").innerHTML = "";
+            for(i in clicker.upgrades){
+                document.querySelector("#upgrades").innerHTML+= `<br> <button class="hello" onclick="thing_clicked('${i}')">${clicker.upgrades
+                [i].name}</button class="lols"><h1 class="runaway"You Have ${clicker.upgrades[i].amount}</h1>. Cost ${clicker.upgrades[i].cost}`;
+            }
+        }
+        function updatecount(){
+            if (Cookies.get("clicker")!=null && Cookies.get("clicker") != "undefined"){
+                var clicker1 = JSON.parse(Cookies.get("clicker"));
+                for(i in clicker.upgrades) {
+                    if(clicker1.upgrades[i] == null){
+                        clicker1.upgrades[i] = clicker.upgrades[i];
+                    }
+                }
+                clicker = clicker1
+            }
+            update_upgrades();
+            setInterval(() => {
+                for(i in clicker.upgrades){
+                    clicker.eat+=clicker.upgrades[i].amount*clicker.upgrades[i].eps/20
+                }
+                document.querySelector("#eat").innerHTML = "You Have "+String(clicker.eat).split(".")[0]+" eat";
+                delay++;
+                if(delay >= 40){
+                    Cookies.set("clicker",JSON.stringify(clicker), {expires: 1});
+                    delay = 0;
+
+                }
+            },50);
+        }
+    </script>
+</head>
+<body onload="updatecount()">
+    <h1 id="eat">You Have 0 Eat</h1>
+    <img src="/static/img/cookie.gif" onclick="clicker.eat++">
+    <div id="upgrades">
+
+    </div>
+    <audio autoplay="" src="/avi.mp3"></audio>
+</body>
